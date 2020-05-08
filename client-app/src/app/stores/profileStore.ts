@@ -82,18 +82,37 @@ export default class ProfileStore {
   };
 
   @action deletePhoto = async (photo: IPhoto) => {
-      this.loading = true;
-      try {
-          await agent.Profiles.deletePhoto(photo.id);
-          runInAction(() => {
-              this.profile!.photos = this.profile!.photos.filter(p => p.id !== photo.id);
-              this.loading = false;
-          });
-      } catch (error) {
-          toast.error('Problem deleting photo');
-          runInAction(() => {
-              this.loading = false;
-          });
-      }
-  }
+    this.loading = true;
+    try {
+      await agent.Profiles.deletePhoto(photo.id);
+      runInAction(() => {
+        this.profile!.photos = this.profile!.photos.filter(
+          (p) => p.id !== photo.id
+        );
+        this.loading = false;
+      });
+    } catch (error) {
+      toast.error("Problem deleting photo");
+      runInAction(() => {
+        this.loading = false;
+      });
+    }
+  };
+
+  @action editProfile = async (profile: Partial<IProfile>) => {
+    this.loading = true;
+    try {
+      await agent.Profiles.edit(profile);
+      runInAction(() => {
+        if (
+          profile.displayName !== this.rootStore.userStore.user!.displayName
+        ) {
+          this.rootStore.userStore.user!.displayName = profile.displayName!;
+        }
+        this.profile = { ...this.profile!, ...profile };
+      });
+    } catch (error) {
+      toast.error("Problem edit profile");
+    }
+  };
 }
