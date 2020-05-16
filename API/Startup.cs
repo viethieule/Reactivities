@@ -131,6 +131,10 @@ namespace API
 
             // app.UseHttpsRedirection();
 
+            // Normal files that the web will look for (index.html...)
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+
             app.UseRouting();
             app.UseCors("CorsPolicy");
 
@@ -141,6 +145,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chat");
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
